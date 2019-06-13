@@ -680,4 +680,302 @@ public final class StringUtils {
 		//String変換
 		return formatYYYYMMDD(cal.getTime());
 	}
+	
+	//2019/06/13追加
+    /**
+    * valueの左からstrLen数の文字列を返す
+    * @param value 元文字列
+    * @param strLen 文字数
+    * @return 指定文字列
+    */
+    public static String getStrLength(String value, int strLen) {
+        if (value == null || value.trim().equals("")) {
+            return "";
+
+        } else {
+
+            if (value.length() > strLen) {
+                return value.substring(0, strLen);
+            } else {
+                return value;
+            }
+        }
+    }
+
+    /**
+    * 引数の文字列の長さを取得する(半角は1、全角は2でカウントする)
+    * @param value 文字列
+    * @return 文字列長
+    */
+    public static int getLength(String value){
+        if (value == null || value.equals("")) {
+            return 0;
+        }
+        int ret = 0;
+        byte[] b;
+        try {
+            b = value.getBytes("UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            b  = value.getBytes();
+        }
+        ret = b.length;
+        return ret;
+    }
+    
+    /**
+    * 引数の文字列の長さを取得する(半角は1、全角は2でカウントする)
+    * 指定の文字列でエンコーディングします
+    * @param value 文字列
+    * @return 文字列長
+    */
+    public static int getLength(String value, String enc ) throws Exception{
+        if (value == null || value.equals("")) {
+            return 0;
+        }
+		byte[] b  = value.getBytes(enc);
+        return b.length;
+    }
+    
+    /**
+    * 日付の編集を行う  （ yyyymmdd ===> yyyy/mm/dd ）
+    * @param value 処理対象文字列
+    * @return 処理結果 yyyy/mm/dd
+    */
+    public static String edtDate(String value){
+
+        if (Checker.isNull(value)) {
+            return "";
+
+        } else if (value.equals("0")) {
+            return "";
+
+        } else if (getLength(value) != 8){
+			return value;
+
+		} else if (value.indexOf('/') > 0) {
+            return value;
+
+        } else {
+            return (value.substring(0, 4) + "/" + value.substring(4, 6) + "/" + value.substring(6));
+        }
+    }
+
+    /**
+    * 日付の編集を行う  （ yyyymmdd ===> yyyy年mm月 ）
+    * @param value 処理対象文字列
+    * @return 処理結果 yyyy年mm月
+    */
+    public static String edtDate2(String value){
+
+        if (Checker.isNull(value)) {
+            return "";
+
+        } else if (value.equals("0")) {
+            return "";
+
+        } else if (getLength(value) != 8){
+			return value;
+
+		// このチェックは何？
+		} else if (value.indexOf('/') > 0) {
+            return value;
+
+        } else {
+            return (value.substring(0, 4) + "年" + value.substring(4, 6) + "月");
+        }
+    }
+
+
+    /**
+    * 日付の編集を行う   （ yyyy/mm/dd ===> yyyymmdd ）
+    * @param value 編集の日付
+    * @return 処理結果 yyyymmdd
+    */
+    public static String unEdtDate(String value){
+
+        if (Checker.isNull(value) || value.equals("0")) {
+            return "";
+
+        } else if (getLength(value) != 10) {
+			return value;
+
+        } else if (value.indexOf('/') > 0) {
+            return (value.substring(0, 4) + value.substring(5, 7) + value.substring(8));
+
+        } else {
+            return value;
+        }
+    }
+
+    /**
+    * 時刻の編集を行う
+    * @param value 処理対象文字列
+    * @return 処理結果
+    */
+    public static String edtTime(String value){
+
+        if (Checker.isNull(value)) {
+            return "";
+
+        } else if (value.equals("0")) {
+            return "";
+
+        } else if (getLength(value) != 6){
+			return value;
+        }
+
+        return (value.substring(0,2) + ":" + value.substring(2,4) + ":" + value.substring(4));
+    }
+
+    /**
+    * 時刻の編集を行う   （ HH:MM:SS ===> HHMMSS ）
+    * @param value 編集の日付
+    * @return 処理結果 yyyymmdd
+    */
+    public static String unEdtTime(String value){
+
+        if (Checker.isNull(value) || value.equals("0")) {
+	        return "";
+
+        } else if(getLength(value) != 8) {
+			return value;
+
+        } else if(value.indexOf(':') > 0) {
+            return (value.substring(0, 2) + value.substring(3, 5) + value.substring(6));
+
+        } else {
+            return value;
+        }
+    }
+
+    /**
+    * 文字列中の"-"を削除する処理
+    * @param value "-"を削除したいの文字列
+    * @return "-"を削除した文字列
+    */
+    public static String delLineFromStr(String value){
+
+		StringBuffer sb = new StringBuffer(value);
+		int pos = value.length();
+
+		while((pos = value.lastIndexOf("-", pos - 1)) > -1){
+			sb.deleteCharAt(pos);
+		}
+
+        return sb.toString();
+	}
+
+    /**
+    * 文字列中の"-"を追加する処理
+    * @param value "-"を追加したいの文字列
+    * @param  position  "-"を追加する位置
+    * @return "-"を追加した文字列
+    */
+    public static String insLineToStr(String value, int position){
+        StringBuffer sbuff = new StringBuffer(value);
+
+        if (sbuff.length() <= position) {
+            return value;
+        }
+        sbuff.insert(position, "-");
+
+        return sbuff.toString();
+    }
+
+    /**
+    * ３桁おきにカンマを付加する
+    * @param value 処理対象文字列
+    * @return カンマを追加した文字列
+    */
+    public static String addComma(String value){
+        StringBuffer sbuff = new StringBuffer(value);
+
+        if (value.trim().equals("")) {
+            return value;
+
+        } else if (sbuff.length() < 4) {
+            return value;
+        }
+
+        for (int i = sbuff.length() - 3; i > 0; i -=3) {
+            sbuff.insert(i, ",");
+        }
+        return sbuff.toString();
+    }
+
+    /**
+    * valueが空またはNullの場合、Nullを返す
+    * @param  value 変換文字列
+    * @return valueが空またはNullの場合、Nullを返す、以外の場合、valueを返す
+    */
+    public static String getNullStr(String value){
+
+        if (value == null || value.trim().equals("")) {
+          return null;
+        }
+
+        return value;
+    }
+	/**
+	 * 文字列の右スペース＜半角スペース('\u0020'以下)or全角スペース＞を削除したものを返す
+	 * ただし、null時は空文字を返す
+	 * ほとんど全てのリクエストパラメータはこの変換で良いはず
+	 */
+	public static String escNull( String s ) {
+		if ( s == null ) return "";
+		//削除するオフセット検索
+		int rightOffset = s.length();
+		for ( int i = 0; i < s.length(); i++ ) {
+			char c = s.charAt(rightOffset - 1);
+			if ( c <= '\u0020' || c == '　' ) {
+			}
+			else {
+				break;
+			}
+			rightOffset--;
+		}
+		return s.substring(0,rightOffset);
+	}
+	
+	/**
+	 * 空文字の場合、引数の数値を返す
+	 * @param i チェック対象の数値
+	 * @param rtnInt 戻り値となる数値
+	 * @return チェック対象の数値又は戻り値となる数値
+	 */
+	public static Integer NullCharToInt(Integer i,int rtnInt){
+		if (i == null) {
+			return rtnInt;
+		}else{
+			return i;
+		}
+	}
+	
+	/**
+	 * 空文字の場合、引数の文字列を返す
+	 * @param s チェック対象の文字列
+	 * @param rtnStr 戻り値となる文字列
+	 * @return チェック対象の文字列又は戻り値となる文字列
+	 */
+	public static String NullCharToStr(String s,String rtnStr){
+		if(!SgxStringUtils.isRequired(s)){
+			return rtnStr;
+		}else{
+			return s;
+		}
+	}
+	
+	/**
+	 * 空文字の場合、引数の文字列を返す
+	 * @param s チェック対象の文字列
+	 * @param rtnStr 戻り値となる文字列
+	 * @return チェック対象の文字列又は戻り値となる文字列
+	 */
+	public static String NullCharToStr(Integer i, String rtnStr){
+		if (i == null) {
+			return rtnStr;
+		}else{
+			return String.valueOf(i);
+		}
+	}
 }
